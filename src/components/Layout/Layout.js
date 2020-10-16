@@ -1,10 +1,10 @@
 import React from 'react';
 import './Layout.scss';
+import Toolbar from '../Navigation/Toolbar/Toolbar'
 
 const layout = (props) => (
     <React.Fragment>
-        <div>
-        </div>
+        <Toolbar />
         <main className="Content">
             {props.children}
         </main>

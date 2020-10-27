@@ -6,6 +6,7 @@ import Modal from '../../components/UI/Modal/Modal'
 import OrderSummary from '../../components/Burger/OrderSummary/OrderSummary'
 import Spinner from '../../components/UI/Spinner/Spinner'
 import withErrorHandler from '../withErrorHandler/withErrorHandler'
+import '../../components/Order/CheckoutSummary/CheckoutSummary.scss'
 
 
 const { Component } = require("react");
@@ -88,28 +89,17 @@ class BurgerBuilder extends Component {
     }
 
     purchaseContinueHandler = () => {
-        this.setState({ loading: true })
-        const orderData = {
-            ingredients: this.state.ingredients,
-            price: this.state.totalPrice.toFixed(2),
-            customer: {
-                name: 'Kipi',
-                address: {
-                    street: 'ulica 2',
-                    zipCode: '41-250',
-                    country: 'Poland'
-                },
-                email: 'test@test.com'
-            },
-            deliveryMethod: 'uberEats'
+        
+        const queryParams = [];
+        for (let i in this.state.ingredients) {
+            queryParams.push(encodeURIComponent(i) + '=' + encodeURIComponent(this.state.ingredients[i]))
         }
-        axios.post('/orders.json', orderData)
-            .then( response => {
-                this.setState({ loading: false, purchasing: false })
-            })
-            .catch( error => {
-                this.setState({ loading: false, purchasing: false })
-            })
+        queryParams.push('price=' + this.state.totalPrice);
+        const queryString = queryParams.join('&')
+        this.props.history.push({
+            pathname: '/checkout',
+            search: '?' + queryString
+        });
     }
 
     render () {
@@ -125,7 +115,11 @@ class BurgerBuilder extends Component {
         if (this.state.ingredients) {
             burger = (
                 <React.Fragment>
-                <Burger ingredients={this.state.ingredients} />
+                <div className="CheckoutSummary">
+                    <div style={{width: '100%', margin: 'auto'}}>
+                        <Burger ingredients={this.state.ingredients} />
+                    </div>
+                </div>
                 <BuildControls 
                 ingredientAdded={this.addIngredientHandler}
                 ingredientRemoved={this.removeIngredientHandler}
@@ -133,6 +127,7 @@ class BurgerBuilder extends Component {
                 price={this.state.totalPrice}
                 purchasable={this.state.purchasable}
                 ordered={this.purchaseHandler} />
+                
                 </React.Fragment>);
             
             orderSummary = <OrderSummary 

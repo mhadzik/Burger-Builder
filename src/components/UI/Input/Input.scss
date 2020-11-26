@@ -27,3 +27,12 @@
     }
 }
 
+.InputInvalid {
+    border: 1px solid red;
+    background-color: #fa402857;
+}
+
+.ValidationError {
+    color: red;
+    margin: 5px 0;
+} 
